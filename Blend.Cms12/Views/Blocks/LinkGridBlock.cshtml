@@ -1,0 +1,5 @@
+﻿@model LinkGridBlock
+
+<section style="display: flex;">
+    @Html.PropertyFor(x => x.Links, new { Tag = "LinkGrid", HasContainer = false })
+</section>

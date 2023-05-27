@@ -1,0 +1,29 @@
+﻿@model PageViewModel<GeneralPage>
+
+
+<!-- Page Header -->
+<header class="masthead">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1>@Html.PropertyFor(x => x.Page.Headline)</h1>
+                    @if (!string.IsNullOrEmpty(Model.Page.HeadlineSlug))
+                    {
+                        <span class="subheading">@Html.PropertyFor(x => x.Page.HeadlineSlug)</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            @Html.PropertyFor(x => x.Page.Body)
+            @Html.PropertyFor(x => x.Page.BottomContentArea)
+        </div>
+    </div>
+</div>

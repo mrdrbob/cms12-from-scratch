@@ -1,0 +1,10 @@
+﻿@model RelatedPagesBlockViewModel
+
+<div>
+    @foreach (var item in Model.RelatedPages)
+    {
+        <div>
+            <a href="@Url.ContentUrl(item.ContentLink)">@item.Name</a>
+        </div>
+    }
+</div>

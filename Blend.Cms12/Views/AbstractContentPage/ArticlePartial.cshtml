@@ -1,0 +1,12 @@
+﻿@model AbstractContentPage
+
+<article class="post-preview">
+    <a href="@Url.ContentUrl(Model.ContentLink)">
+        <h2 class="post-title">@Model.Name</h2>
+    </a>
+    <p class="post-meta">
+        @Model.MetaDescription
+    </p>
+</article>
+
+<hr>

@@ -1,0 +1,9 @@
+﻿@model SectionMediaBlock
+
+
+<h2 class="section-heading">@Html.PropertyFor(x => x.Headline)</h2>
+
+@Html.PropertyFor(x => x.Body)
+
+<img class="img-fluid" src="@Url.ContentUrl(Model.Image)" alt="">
+<span class="caption text-muted"></span>

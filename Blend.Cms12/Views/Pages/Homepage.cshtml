@@ -1,0 +1,37 @@
+﻿@model HomepageViewModel
+
+
+
+    <header class="masthead">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="page-heading">
+                    <h1>Blend Interactive</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+
+                @foreach (var page in Model.RelatedContent)
+                {
+                    <div>
+                        @{ Html.RenderContentData(page, false, "ArticlePartial"); }
+                    </div>
+                }
+
+                <!-- Pager -->
+                <div class="clearfix">
+                    <a class="btn btn-primary float-right" href="/posts">View All Posts &rarr;</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
