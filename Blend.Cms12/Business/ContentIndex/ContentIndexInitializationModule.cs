@@ -22,10 +22,10 @@ namespace Blend.Cms12.Business.ContentIndex
         private void Events_DeletedContent(object? sender, EPiServer.DeleteContentEventArgs e)
         {
             var indexService = ServiceLocator.Current.GetInstance<OptimizelyContentIndexService>();
-            if (!(e.Content is PageData page))
+            if (e.Content is not PageData page)
                 return;
 
-            if (!(page is IHaveContent indexable))
+            if (page is not IHaveContent indexable)
                 return;
 
             indexService.Delete(e.ContentLink);
@@ -34,10 +34,10 @@ namespace Blend.Cms12.Business.ContentIndex
         private void Events_MovedContent(object? sender, EPiServer.ContentEventArgs e)
         {
             var indexService = ServiceLocator.Current.GetInstance<OptimizelyContentIndexService>();
-            if (!(e.Content is PageData page))
+            if (e.Content is not PageData page)
                 return;
 
-            if (!(page is IHaveContent indexable))
+            if (page is not IHaveContent indexable)
                 return;
 
             bool isDeleted = e.TargetLink.CompareToIgnoreWorkID(ContentReference.WasteBasket);
@@ -54,10 +54,10 @@ namespace Blend.Cms12.Business.ContentIndex
         private void Events_PublishedContent(object? sender, EPiServer.ContentEventArgs e)
         {
             var indexService = ServiceLocator.Current.GetInstance<IndexService>();
-            if (!(e.Content is PageData page))
+            if (e.Content is not PageData page)
                 return;
 
-            if (!(page is IHaveContent indexable))
+            if (page is not IHaveContent indexable)
                 return;
 
             var indexBuilder = new IndexBuilder(page.ContentLink.ID.ToString(), page.Language.Name);
@@ -70,7 +70,8 @@ namespace Blend.Cms12.Business.ContentIndex
             var events = ServiceLocator.Current.GetInstance<IContentEvents>();
 
             events.PublishedContent -= Events_PublishedContent;
-
+            events.MovedContent -= Events_MovedContent;
+            events.DeletedContent -= Events_DeletedContent;
         }
     }
 }

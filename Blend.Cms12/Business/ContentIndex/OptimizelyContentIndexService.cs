@@ -45,7 +45,7 @@ namespace Blend.Cms12.Business.ContentIndex
 
         private void ProcessPage(PageData page)
         {
-            if (!(page is IHaveContent indexable))
+            if (page is not IHaveContent indexable)
                 return;
 
             var indexBuilder = new IndexBuilder(page.ContentLink.ID.ToString(), page.Language.Name);

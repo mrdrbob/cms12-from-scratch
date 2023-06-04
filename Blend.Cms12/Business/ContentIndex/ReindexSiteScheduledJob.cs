@@ -1,13 +1,9 @@
-﻿using Blend.Cms12.Models.Pages;
-using Blend.ContentIndex;
-using EPiServer;
+﻿using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.PlugIn;
 using EPiServer.Scheduler;
-using EPiServer.ServiceLocation;
 using EPiServer.Web;
-using System.Collections.Generic;
 
 namespace Blend.Cms12.Business.ContentIndex
 {
