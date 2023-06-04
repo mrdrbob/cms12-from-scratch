@@ -59,6 +59,11 @@ namespace Blend.Cms12.Business.ContentIndex
                 .WhereMatch("Ancestors", contentLink.ID.ToString());
             indexService.Delete(query);
         }
+
+        public void DeleteAll()
+        {
+            indexService.Delete(new ContentQuery());
+        }
     }
 
     public class PageTreeUpdateContext

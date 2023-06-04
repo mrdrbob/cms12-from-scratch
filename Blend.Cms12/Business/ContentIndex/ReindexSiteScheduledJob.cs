@@ -22,13 +22,13 @@ namespace Blend.Cms12.Business.ContentIndex
         private readonly IContentLoader loader;
         private readonly ISiteDefinitionRepository siteRepository;
         private readonly ILanguageBranchRepository languageRepository;
-        private readonly IndexService indexService;
+        private readonly OptimizelyContentIndexService indexService;
 
         public ReindexSiteScheduledJob(
             IContentLoader loader, 
             ISiteDefinitionRepository siteRepository, 
             ILanguageBranchRepository languageRepository,
-            IndexService indexService)
+            OptimizelyContentIndexService indexService)
         {
             this.loader = loader;
             this.siteRepository = siteRepository;
@@ -54,29 +54,28 @@ namespace Blend.Cms12.Business.ContentIndex
             var sites = siteRepository.List();
             var languages = languageRepository.ListEnabled();
 
-            indexService.Delete(new ContentQuery());
+            indexService.DeleteAll();
+            var context = new PageTreeUpdateContext();
 
             foreach (var site in sites)
             {
-                if (!_shouldContinue)
+                if (!context.ShouldContinue)
                     break;
 
                 foreach (var lang in languages)
                 {
-                    if (!_shouldContinue)
+                    if (!context.ShouldContinue)
                         break;
 
-                    IndexSiteAndLanguage(site, lang);
+                    IndexSiteAndLanguage(site, lang, context);
                 }
             }
 
             return $"Processed {_pages} pages.";
         }
 
-        private void IndexSiteAndLanguage(SiteDefinition site, LanguageBranch language)
+        private void IndexSiteAndLanguage(SiteDefinition site, LanguageBranch language, PageTreeUpdateContext context)
         {
-            Stack<PageData> stack = new Stack<PageData>();
-
             // var startPage = loader.Get<PageData>(site.StartPage);
             if (ContentReference.IsNullOrEmpty(site.StartPage))
                 return;
@@ -84,36 +83,7 @@ namespace Blend.Cms12.Business.ContentIndex
             if (!loader.TryGet(site.StartPage, language.Culture, out PageData startPage))
                 return;
 
-            stack.Push(startPage);
-
-            while (stack.Count > 0)
-            {
-                if (!_shouldContinue)
-                    break;
-
-                var page = stack.Pop();
-
-                ProcessPage(page);
-                _pages += 1;
-
-                OnStatusChanged($"Processed {_pages} pages.");
-
-                var childPages = loader.GetChildren<PageData>(page.ContentLink, language.Culture);
-                foreach (var child in childPages)
-                {
-                    stack.Push(child);
-                }
-            }
-        }
-
-        private void ProcessPage(PageData page)
-        {
-            if (!(page is IHaveContent indexable))
-                return;
-
-            var indexBuilder = new IndexBuilder(page.ContentLink.ID.ToString(), page.Language.Name);
-            indexable.BuildIndex(indexBuilder);
-            indexService.Update(indexBuilder);
+            indexService.ReindexTree(startPage, context);
         }
     }
 }
