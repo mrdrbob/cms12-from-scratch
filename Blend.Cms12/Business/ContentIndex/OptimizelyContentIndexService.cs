@@ -4,6 +4,8 @@ using EPiServer;
 using EPiServer.Core;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace Blend.Cms12.Business.ContentIndex
 {
@@ -63,6 +65,35 @@ namespace Blend.Cms12.Business.ContentIndex
         public void DeleteAll()
         {
             indexService.Delete(new ContentQuery());
+        }
+
+        public IEnumerable<T> Query<T>(ContentQuery contentQuery) where T : IContent
+        {
+            // Execute the query
+            var matchingIds = indexService.Query(contentQuery);
+
+            // Get a particular language?
+            CultureInfo? language = !string.IsNullOrEmpty(contentQuery.Language) && contentQuery.Language != ContentIndexDefaults.DefaultLanguage 
+                ? new CultureInfo(contentQuery.Language) 
+                : null;
+
+            // Try to load the matching content objects
+            var contentObjects = matchingIds.Select(id =>
+            {
+                if (!int.TryParse(id, out int parsedId))
+                    return null;
+
+                var contentLink = new ContentReference(parsedId);
+                if (!loader.TryGet(contentLink, language, out IContent content))
+                    return null;
+
+                return content;
+            })
+                .Where(x => x is not null)
+                .OfType<T>()
+                .ToList();
+
+            return contentObjects;
         }
     }
 
