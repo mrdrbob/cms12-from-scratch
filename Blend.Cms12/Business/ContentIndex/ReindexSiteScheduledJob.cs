@@ -36,9 +36,13 @@ namespace Blend.Cms12.Business.ContentIndex
             this.indexService = indexService;
 
             this.IsStoppable = true;
+            _context = new PageTreeUpdateContext
+            {
+                OnStatusChanged = this.OnStatusChanged
+            };
         }
 
-        private readonly PageTreeUpdateContext _context = new PageTreeUpdateContext();
+        private readonly PageTreeUpdateContext _context;
 
         public override void Stop()
         {
