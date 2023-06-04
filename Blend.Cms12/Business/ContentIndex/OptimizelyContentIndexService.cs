@@ -64,7 +64,7 @@ namespace Blend.Cms12.Business.ContentIndex
     public class PageTreeUpdateContext
     {
         public int Pages { get; set; }
-        public bool ShouldContinue { get; set; }
+        public bool ShouldContinue { get; set; } = true;
         public Action<string>? OnStatusChanged { get; set; }
     }
 }
