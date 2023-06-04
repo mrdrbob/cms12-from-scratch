@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Blend.Cms12.Business.ContentIndex;
 using EPiServer.Cms.Shell;
 using EPiServer.Cms.UI.AspNetIdentity;
 using EPiServer.Scheduler;
@@ -37,7 +38,8 @@ namespace Blend.Cms12
                 .AddCmsAspNetIdentity<ApplicationUser>()
                 .AddCms()
                 .AddAdminUserRegistration()
-                .AddEmbeddedLocalization<Startup>();
+                .AddEmbeddedLocalization<Startup>()
+                .AddContentIndex(_configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

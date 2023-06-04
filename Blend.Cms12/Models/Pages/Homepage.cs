@@ -1,4 +1,5 @@
-﻿using EPiServer.DataAnnotations;
+﻿using Blend.ContentIndex;
+using EPiServer.DataAnnotations;
 
 namespace Blend.Cms12.Models.Pages
 {
