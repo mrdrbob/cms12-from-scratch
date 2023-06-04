@@ -38,43 +38,41 @@ namespace Blend.Cms12.Business.ContentIndex
             this.IsStoppable = true;
         }
 
-        private bool _shouldContinue;
-        private int _pages;
+        private readonly PageTreeUpdateContext _context = new PageTreeUpdateContext();
 
         public override void Stop()
         {
-            _shouldContinue = false;
+            _context.ShouldContinue = false;
         }
 
         public override string Execute()
         {
-            _shouldContinue = true;
-            _pages = 0;
+            _context.ShouldContinue = true;
+            _context.Pages = 0;
 
             var sites = siteRepository.List();
             var languages = languageRepository.ListEnabled();
 
             indexService.DeleteAll();
-            var context = new PageTreeUpdateContext();
 
             foreach (var site in sites)
             {
-                if (!context.ShouldContinue)
+                if (!_context.ShouldContinue)
                     break;
 
                 foreach (var lang in languages)
                 {
-                    if (!context.ShouldContinue)
+                    if (!_context.ShouldContinue)
                         break;
 
-                    IndexSiteAndLanguage(site, lang, context);
+                    IndexSiteAndLanguage(site, lang);
                 }
             }
 
-            return $"Processed {_pages} pages.";
+            return $"Processed {_context.Pages} pages.";
         }
 
-        private void IndexSiteAndLanguage(SiteDefinition site, LanguageBranch language, PageTreeUpdateContext context)
+        private void IndexSiteAndLanguage(SiteDefinition site, LanguageBranch language)
         {
             // var startPage = loader.Get<PageData>(site.StartPage);
             if (ContentReference.IsNullOrEmpty(site.StartPage))
@@ -83,7 +81,7 @@ namespace Blend.Cms12.Business.ContentIndex
             if (!loader.TryGet(site.StartPage, language.Culture, out PageData startPage))
                 return;
 
-            indexService.ReindexTree(startPage, context);
+            indexService.ReindexTree(startPage, _context);
         }
     }
 }
