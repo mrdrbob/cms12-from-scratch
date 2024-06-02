@@ -1,5 +1,4 @@
-﻿using Blend.Cms12.Business.ContentIndex;
-using Blend.Cms12.Models.Blocks;
+﻿using Blend.Cms12.Models.Blocks;
 using Blend.Cms12.Models.Blocks.ViewModels;
 using Blend.Cms12.Models.Pages;
 using Blend.ContentIndex;
@@ -7,12 +6,61 @@ using EPiServer;
 using EPiServer.Core;
 using EPiServer.Web;
 using EPiServer.Web.Mvc;
-using EPiServer.Web.Routing;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Blend.Cms12.Controllers.Blocks
 {
+    // This is a somewhat badly written example that does not use an index to pull related content.
+    // Do not use the following code.
+    public class RelatedPagesBlockController : BlockComponent<RelatedPagesBlock>
+    {
+        private readonly IContentLoader contentLoader;
+
+        public RelatedPagesBlockController(IContentLoader contentLoader)
+        {
+            this.contentLoader = contentLoader;
+        }
+
+        protected override IViewComponentResult InvokeComponent(RelatedPagesBlock currentContent)
+        {
+            var currentStartPage = SiteDefinition.Current?.StartPage;
+            var root = !ContentReference.IsNullOrEmpty(currentStartPage) && contentLoader.TryGet(currentStartPage, out PageData startPage) ? startPage : null;
+            var relatedContent = root switch
+            {
+                null => Enumerable.Empty<AbstractContentPage>(),
+                _ => GetDescendents(root),
+            };
+
+            if (currentContent.MatchAnyCategory is not null && currentContent.MatchAnyCategory.Any())
+            {
+                relatedContent = relatedContent.Where(x => x.Category != null && x.Category.Intersect(currentContent.MatchAnyCategory).Any());
+            }
+
+            if (currentContent.MatchAllCategories is not null && currentContent.MatchAllCategories.Any())
+            {
+                relatedContent = relatedContent.Where(x => x.Category != null && x.Category.Intersect(currentContent.MatchAllCategories).Count() == currentContent.MatchAllCategories.Count());
+            }
+
+            var viewModel = new RelatedPagesBlockViewModel(currentContent, relatedContent);
+            return View("~/Views/Blocks/RelatedPagesBlock.cshtml", viewModel);
+        }
+
+        private IEnumerable<AbstractContentPage> GetDescendents(PageData root)
+        {
+            var ids = contentLoader.GetDescendents(root.ContentLink);
+            foreach (var id in ids)
+            {
+                if (contentLoader.TryGet<AbstractContentPage>(id, out AbstractContentPage page))
+                {
+                    yield return page;
+                }
+            }
+        }
+    }
+
+    /*
     public class RelatedPagesBlockController : BlockComponent<RelatedPagesBlock>
     {
         private readonly OptimizelyContentIndexService indexService;
@@ -63,4 +111,5 @@ namespace Blend.Cms12.Controllers.Blocks
             return View("~/Views/Blocks/RelatedPagesBlock.cshtml", viewModel);
         }
     }
+    */
 }

@@ -1,6 +1,10 @@
 ﻿@model RelatedPagesBlockViewModel
 
 <div>
+    @if (!Model.RelatedPages.Any())
+    {
+        <p>No Results Found</p>
+    }
     @foreach (var item in Model.RelatedPages)
     {
         <div>
