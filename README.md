@@ -12,6 +12,7 @@ Below are the episodes, and corresponding tags (should they exist):
 |03 - Rendering Content in Optimizely CMS 12|https://youtu.be/DTvoE4xCVSA||
 |04 - Working with Content in Optimizely CMS 12|https://youtu.be/2IfrEB9IbBA||
 |05 - Events and Scheduled Jobs in Optimizely CMS 12|https://youtu.be/aPx2klRTnvs|`episode/05-events-and-jobs`|
+|06 - SQL Profiling|https://youtu.be/kUV67AfeQuA|`episode/06-sql-profiler`|
 
 ## Disclaimer
 
