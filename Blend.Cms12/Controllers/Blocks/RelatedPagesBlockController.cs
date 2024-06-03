@@ -30,7 +30,7 @@ namespace Blend.Cms12.Controllers.Blocks
             var relatedContent = root switch
             {
                 null => Enumerable.Empty<AbstractContentPage>(),
-                _ => GetDescendents(root),
+                _ => GetDescendents(root).ToList(),
             };
 
             if (currentContent.MatchAnyCategory is not null && currentContent.MatchAnyCategory.Any())
